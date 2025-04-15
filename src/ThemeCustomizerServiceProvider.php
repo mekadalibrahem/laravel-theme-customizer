@@ -9,15 +9,15 @@ use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
 class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider{
     public function boot(){
         $this->publishes([
-            __DIR__.'/../config/theme-customizer.php' => config_path('theme-customizer.php'),
+            __DIR__.'/config/theme-customizer.php' => config_path('theme-customizer.php'),
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../database/migrations/' => database_path('migrations'),
+            __DIR__.'./database/migrations/' => database_path('migrations'),
         ], 'migrations');
 
         $this->publishes([
-            __DIR__.'/../src/views' => resource_path('views/vendor/theme-customizer'),
+            __DIR__.'/src/views' => resource_path('views/vendor/theme-customizer'),
         ], 'views');
 
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
@@ -33,7 +33,7 @@ class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider
         }
     }
     public function register(){
-        $this->mergeConfigFrom(__DIR__.'/../config/theme-customizer.php', 'theme-customizer');
+        $this->mergeConfigFrom(__DIR__.'/config/theme-customizer.php', 'theme-customizer');
 
         $this->app->bind(ThemeRepositoryInterface::class, ThemeRepository::class);
     }
