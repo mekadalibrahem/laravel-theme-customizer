@@ -14,12 +14,12 @@ class InstallThemeCustomizer extends Command
         $this->info('Installing Theme Customizer...');
 
         $this->call('vendor:publish', [
-            '--provider' => 'YourVendor\ThemeCustomizer\ThemeCustomizerServiceProvider',
+            '--provider' => 'Mekad\LaravelThemeCustomizer\ThemeCustomizerServiceProvider',
             '--tag' => 'config',
         ]);
 
         $this->call('vendor:publish', [
-            '--provider' => 'YourVendor\ThemeCustomizer\ThemeCustomizerServiceProvider',
+            '--provider' => 'Mekad\LaravelThemeCustomizer\ThemeCustomizerServiceProvider',
             '--tag' => 'migrations',
         ]);
 
