@@ -6,4 +6,4 @@ A Laravel package for theme customization with support for TailwindCSS and Boots
 
 1. Install via Composer:
    ```bash
-   composer require your-vendor/theme-customizer
+   composer require mekad/laravel-theme-customizer
