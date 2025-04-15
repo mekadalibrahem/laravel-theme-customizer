@@ -2,6 +2,10 @@
 
 namespace Mekad\LaravelThemeCustomizer;
 
+use Mekad\LaravelThemeCustomizer\Console\InstallThemeCustomizer;
+use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepository;
+use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
+
 class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider{
     public function boot(){
         $this->publishes([

@@ -1,10 +1,10 @@
 <?php
 
-namespace YourVendor\ThemeCustomizer\Factories;
+namespace Mekad\LaravelThemeCustomizer\Factories;
 
 use InvalidArgumentException;
-use YourVendor\ThemeCustomizer\Services\BootstrapThemeFramework;
-use YourVendor\ThemeCustomizer\Services\TailwindThemeFramework;
+use Mekad\LaravelThemeCustomizer\Services\BootstrapThemeFramework;
+use Mekad\LaravelThemeCustomizer\Services\TailwindThemeFramework;
 
 class ThemeFrameworkFactory
 {

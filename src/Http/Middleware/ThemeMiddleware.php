@@ -3,7 +3,7 @@
 namespace Mekad\LaravelThemeCustomizer\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use YourVendor\ThemeCustomizer\Repositories\ThemeRepositoryInterface;
+use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
 
 class ThemeMiddleware
 {

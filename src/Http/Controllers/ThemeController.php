@@ -3,8 +3,9 @@
 namespace Mekad\LaravelThemeCustomizer\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use YourVendor\ThemeCustomizer\Repositories\ThemeRepositoryInterface;
+use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
 
 class ThemeController extends Controller
 {

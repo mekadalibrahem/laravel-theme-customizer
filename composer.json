@@ -14,8 +14,7 @@
             "email": "mekadalibrahem123@gmail.com"
         }
     ],
-    "require": {
-            "php": "^8.0",
-        "illuminate/support": "^9.0|^10.0"
+    "require-dev": {
+        "orchestra/testbench": "^10.2"
     }
 }
