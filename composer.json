@@ -1,0 +1,21 @@
+{
+    "name": "mekad/laravel-theme-customizer",
+    "description": "A Laravel package for theme customization with TailwindCSS and Bootstrap support",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mekad\\LaravelThemeCustomizer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mekadalibrahem",
+            "email": "mekadalibrahem123@gmail.com"
+        }
+    ],
+    "require": {
+            "php": "^8.0",
+        "illuminate/support": "^9.0|^10.0"
+    }
+}
