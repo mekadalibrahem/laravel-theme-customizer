@@ -62,6 +62,27 @@ class ThemeRepository implements ThemeRepositoryInterface
     }
 
     /**
+     * Deactivate all global themes.
+     *
+     * @return void
+     */
+    public function deactivateAllGlobalThemes()
+    {
+        Theme::where('is_global', true)->update(['is_active' => false]);
+    }
+
+    /**
+     * Deactivate all themes for a specific user.
+     *
+     * @param int $userId
+     * @return void
+     */
+    public function deactivateAllUserThemes($userId)
+    {
+        Theme::where('user_id', $userId)->update(['is_active' => false]);
+    }
+
+    /**
      * Delete a theme.
      *
      * @param int $themeId

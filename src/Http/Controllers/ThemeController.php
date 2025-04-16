@@ -149,8 +149,14 @@ class ThemeController extends Controller
         ]);
 
         if (config('theme-customizer.theme_mode') === 'admin') {
+            // In admin mode, deactivate all global themes first
+            $this->themeRepository->deactivateAllGlobalThemes();
+            // Then activate the selected global theme
             $this->themeRepository->setActiveGlobalTheme($request->theme_id);
         } else {
+            // In user mode, deactivate all user's themes first
+            $this->themeRepository->deactivateAllUserThemes(Auth::id());
+            // Then activate the selected theme for the user
             $this->themeRepository->setActiveTheme(Auth::id(), $request->theme_id);
         }
 

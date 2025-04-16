@@ -86,6 +86,21 @@ interface ThemeRepositoryInterface
     public function setActiveGlobalTheme($themeId);
 
     /**
+     * Deactivate all global themes.
+     *
+     * @return void
+     */
+    public function deactivateAllGlobalThemes();
+
+    /**
+     * Deactivate all themes for a specific user.
+     *
+     * @param int $userId
+     * @return void
+     */
+    public function deactivateAllUserThemes($userId);
+
+    /**
      * Delete a theme.
      *
      * @param int $themeId
