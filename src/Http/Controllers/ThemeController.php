@@ -7,15 +7,44 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
 
+/**
+ * ThemeController
+ *
+ * Handles all theme customization related actions including:
+ * - Displaying the theme editor
+ * - Updating theme settings
+ * - Setting active themes
+ * - Retrieving theme data
+ */
 class ThemeController extends Controller
 {
+    /**
+     * Theme repository instance.
+     *
+     * @var ThemeRepositoryInterface
+     */
     protected $themeRepository;
 
+    /**
+     * Create a new controller instance.
+     *
+     * @param ThemeRepositoryInterface $themeRepository
+     * @return void
+     */
     public function __construct(ThemeRepositoryInterface $themeRepository)
     {
         $this->themeRepository = $themeRepository;
     }
 
+    /**
+     * Display the theme editor interface.
+     *
+     * Retrieves themes based on the current theme mode:
+     * - Admin mode: Shows global themes
+     * - User mode: Shows user-specific themes
+     *
+     * @return \Illuminate\View\View
+     */
     public function show()
     {
         $themes = config('theme-customizer.theme_mode') === 'admin'
@@ -31,6 +60,17 @@ class ThemeController extends Controller
         return view('laravel-theme-customizer::theme.edit', compact('themes', 'theme'));
     }
 
+    /**
+     * Update or create a theme.
+     *
+     * Validates and processes theme data including:
+     * - Color values in hex format
+     * - Theme key and name
+     * - Global/user-specific theme settings
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request)
     {
         $request->validate([
@@ -66,6 +106,16 @@ class ThemeController extends Controller
         return redirect()->back()->with('success', 'Theme updated successfully!');
     }
 
+    /**
+     * Set a theme as active.
+     *
+     * Handles both global and user-specific theme activation:
+     * - Admin mode: Sets global active theme
+     * - User mode: Sets user's active theme
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function setActive(Request $request)
     {
         $request->validate([
@@ -81,6 +131,14 @@ class ThemeController extends Controller
         return redirect()->back()->with('success', 'Active theme set successfully!');
     }
 
+    /**
+     * Retrieve theme data by ID.
+     *
+     * Returns theme data in JSON format for AJAX requests.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getTheme(Request $request)
     {
         $request->validate([

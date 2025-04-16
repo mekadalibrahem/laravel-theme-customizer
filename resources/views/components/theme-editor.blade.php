@@ -12,7 +12,7 @@
     @endif
 
     <!-- Form Section -->
-    <form action="{{ route('theme-customizer.update') }}" method="POST" class="@if(config('theme-customizer.framework') === 'bootstrap') mt-4 @else space-y-6 bg-white p-6 rounded-lg shadow-md @endif" id="theme-form">
+    <form action="{{ route(config('theme-customizer.routes.name_prefix') . 'update') }}" method="POST" class="@if(config('theme-customizer.framework') === 'bootstrap') mt-4 @else space-y-6 bg-white p-6 rounded-lg shadow-md @endif" id="theme-form">
         @csrf
         <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-3">
@@ -148,7 +148,7 @@
 
             // Fetch theme data
             function fetchTheme(themeId) {
-                fetch('{{ route('theme-customizer.get-theme') }}', {
+                fetch('{{ route(config('theme-customizer.routes.name_prefix') . 'get-theme') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -175,7 +175,7 @@
             setActiveButton.addEventListener('click', () => {
                 const themeId = themeSelector.value;
                 if (themeId && themeId !== 'new') {
-                    fetch('{{ route('theme-customizer.set-active') }}', {
+                    fetch('{{ route(config('theme-customizer.routes.name_prefix') . 'set-active') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
