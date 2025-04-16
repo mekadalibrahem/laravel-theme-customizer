@@ -18,13 +18,17 @@ class ThemeController extends Controller
 
     public function show()
     {
-        $theme = config('theme-customizer.theme_mode') === 'admin'
-            ? $this->themeRepository->getGlobalTheme()
+        $themes = config('theme-customizer.theme_mode') === 'admin'
+            ? $this->themeRepository->getGlobalThemes()
             : $this->themeRepository->getByUserId(Auth::id());
 
-        $theme = $theme ?? config('theme-customizer.default_colors');
+        $activeTheme = config('theme-customizer.theme_mode') === 'admin'
+            ? $this->themeRepository->getActiveGlobalTheme()
+            : $this->themeRepository->getActiveThemeByUserId(Auth::id());
 
-        return view('laravel-theme-customizer::theme.edit', compact('theme'));
+        $theme = $activeTheme ?? config('theme-customizer.default_colors');
+
+        return view('laravel-theme-customizer::theme.edit', compact('themes', 'theme'));
     }
 
     public function update(Request $request)
@@ -60,5 +64,31 @@ class ThemeController extends Controller
         }
 
         return redirect()->back()->with('success', 'Theme updated successfully!');
+    }
+
+    public function setActive(Request $request)
+    {
+        $request->validate([
+            'theme_id' => 'required|exists:themes,id',
+        ]);
+
+        if (config('theme-customizer.theme_mode') === 'admin') {
+            $this->themeRepository->setActiveGlobalTheme($request->theme_id);
+        } else {
+            $this->themeRepository->setActiveTheme(Auth::id(), $request->theme_id);
+        }
+
+        return redirect()->back()->with('success', 'Active theme set successfully!');
+    }
+
+    public function getTheme(Request $request)
+    {
+        $request->validate([
+            'theme_id' => 'required|exists:themes,id',
+        ]);
+
+        $theme = $this->themeRepository->find($request->theme_id);
+
+        return response()->json($theme);
     }
 }

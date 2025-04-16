@@ -10,6 +10,7 @@ class Theme extends Model
         'user_id',
         'is_global',
         'key',
+        'is_active',
         'primary_color',
         'secondary_color',
         'light_primary',
@@ -22,6 +23,7 @@ class Theme extends Model
 
     protected $casts = [
         'is_global' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     public function user()

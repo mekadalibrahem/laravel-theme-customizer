@@ -1,17 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+class CreateThemesTable extends Migration
+{
     public function up()
     {
         Schema::create('themes', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_global')->default(false);
-            $table->string('key')->unique();
-            $table->unsignedBigInteger('user_id')->nullable();         
+            $table->string('key');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->string('primary_color');
             $table->string('secondary_color');
             $table->string('light_primary');
@@ -23,6 +25,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(['user_id', 'key']);
         });
     }
 
@@ -30,4 +33,4 @@ return new class extends Migration {
     {
         Schema::dropIfExists('themes');
     }
-};
+}

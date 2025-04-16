@@ -6,28 +6,53 @@ use Mekad\LaravelThemeCustomizer\Models\Theme;
 
 class ThemeRepository implements ThemeRepositoryInterface
 {
-    protected $model;
-
-    public function __construct(Theme $model)
+    public function getGlobalTheme()
     {
-        $this->model = $model;
+        return Theme::where('is_global', true)->first();
+    }
+
+    public function getGlobalThemes()
+    {
+        return Theme::where('is_global', true)->get();
+    }
+
+    public function getActiveGlobalTheme()
+    {
+        return Theme::where('is_global', true)->where('is_active', true)->first();
     }
 
     public function getByUserId($userId)
     {
-        return $this->model->where('user_id', $userId)->where('is_global', false)->first();
+        return Theme::where('user_id', $userId)->get();
     }
 
-    public function getGlobalTheme()
+    public function getActiveThemeByUserId($userId)
     {
-        return $this->model->where('is_global', true)->first();
+        return Theme::where('user_id', $userId)->where('is_active', true)->first();
     }
 
-    public function updateOrCreate($userId, array $data, bool $isGlobal = false)
+    public function updateOrCreate($userId, array $data, $isGlobal = false)
     {
-        return $this->model->updateOrCreate(
-            ['user_id' => $userId, 'is_global' => $isGlobal],
+        return Theme::updateOrCreate(
+            ['user_id' => $userId, 'key' => $data['key'], 'is_global' => $isGlobal],
             array_merge($data, ['is_global' => $isGlobal])
         );
+    }
+
+    public function find($themeId)
+    {
+        return Theme::findOrFail($themeId);
+    }
+
+    public function setActiveTheme($userId, $themeId)
+    {
+        Theme::where('user_id', $userId)->update(['is_active' => false]);
+        Theme::where('id', $themeId)->update(['is_active' => true]);
+    }
+
+    public function setActiveGlobalTheme($themeId)
+    {
+        Theme::where('is_global', true)->update(['is_active' => false]);
+        Theme::where('id', $themeId)->update(['is_active' => true]);
     }
 }

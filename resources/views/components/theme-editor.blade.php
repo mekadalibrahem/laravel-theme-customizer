@@ -12,17 +12,30 @@
     @endif
 
     <!-- Form Section -->
-    <form action="{{ route('theme-customizer.update') }}" method="POST" class="@if(config('theme-customizer.framework') === 'bootstrap') mt-4 @else space-y-6 bg-white p-6 rounded-lg shadow-md @endif">
+    <form action="{{ route('theme-customizer.update') }}" method="POST" class="@if(config('theme-customizer.framework') === 'bootstrap') mt-4 @else space-y-6 bg-white p-6 rounded-lg shadow-md @endif" id="theme-form">
         @csrf
-        <div class="flex justify-end gap-3 mb-6">
-            <button type="submit" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-primary @else bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800 transition @endif">Save Theme</button>
-            <button type="reset" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-secondary @else bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition @endif">Reset</button>
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-3">
+                <select id="theme-selector" name="theme_id" class="@if(config('theme-customizer.framework') === 'bootstrap') form-select @else border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 @endif">
+                    <option value="">Select a theme</option>
+                    @foreach ($themes as $t)
+                        <option value="{{ $t->id }}" {{ $t->id === ($theme['id'] ?? null) ? 'selected' : '' }}>{{ $t->key }}</option>
+                    @endforeach
+                    <option value="new">Create New Theme</option>
+                </select>
+                <button type="button" id="set-active-theme" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-primary @else bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition @endif">Set as Active</button>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-primary @else bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800 transition @endif">Save Theme</button>
+                <button type="reset" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-secondary @else bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition @endif">Reset</button>
+            </div>
         </div>
 
         <div class="space-y-6">
-            <div>
-                <label for="key" class="@if(config('theme-customizer.framework') === 'bootstrap') form-label @else block text-sm font-medium text-gray-700 @endif">Theme Name</label>
-                <input type="text" name="key" id="key" value="{{ old('key', $theme['key'] ?? 'custom_theme') }}" class="@if(config('theme-customizer.framework') === 'bootstrap') form-control @else w-full h-10 border border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-green-500 @endif" required>
+            <div id="new-theme-input" class="hidden">
+                <label for="key" class="@if(config('theme-customizer.framework') === 'bootstrap') form-label @else block text-sm font-medium text-gray-700 @endif">Theme Key</label>
+                <input type="text" name="key" id="key" value="" class="@if(config('theme-customizer.framework') === 'bootstrap') form-control @else w-full h-10 border border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-green-500 @endif" required>
+             
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -85,10 +98,23 @@
         </div>
     </div>
 
-    <!-- JavaScript for Real-Time Preview -->
+    <!-- JavaScript for Real-Time Preview and Theme Selection -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const inputs = document.querySelectorAll('input[type="color"], input[type="text"]');
+            const themeSelector = document.getElementById('theme-selector');
+            const newThemeInput = document.getElementById('new-theme-input');
+            const keyInput = document.getElementById('key');
+            const primaryColorInput = document.getElementById('primary_color');
+            const secondaryColorInput = document.getElementById('secondary_color');
+            const lightPrimaryInput = document.getElementById('light_primary');
+            const lightSecondaryInput = document.getElementById('light_secondary');
+            const accentColorInput = document.getElementById('accent_color');
+            const textLightInput = document.getElementById('text_light');
+            const textDarkInput = document.getElementById('text_dark');
+            const darkBackgroundInput = document.getElementById('dark_background');
+            const setActiveButton = document.getElementById('set-active-theme');
+            const form = document.getElementById('theme-form');
+            const colorInputs = document.querySelectorAll('input[type="color"]');
             const previewSection = document.querySelector('.preview-section');
             const previewCard = previewSection.querySelector('div');
             const previewHeading = previewSection.querySelector('h2');
@@ -98,37 +124,94 @@
             const primaryButton = previewCard.querySelector('button:nth-child(3)');
             const secondaryButton = previewCard.querySelector('button:nth-child(4)');
 
-            inputs.forEach(input => {
-                input.addEventListener('input', () => {
-                    switch (input.id) {
-                        case 'dark_background':
-                            previewSection.style.backgroundColor = input.value;
-                            break;
-                        case 'text_light':
-                            previewHeading.style.color = input.value;
-                            previewText.style.color = input.value;
-                            primaryButton.style.color = input.value;
-                            break;
-                        case 'text_dark':
-                            previewCardHeading.style.color = input.value;
-                            previewCardText.style.color = input.value;
-                            secondaryButton.style.color = input.value;
-                            break;
-                        case 'light_primary':
-                            previewCard.style.backgroundColor = input.value;
-                            break;
-                        case 'primary_color':
-                            primaryButton.style.backgroundColor = input.value;
-                            break;
-                        case 'secondary_color':
-                            secondaryButton.style.backgroundColor = input.value;
-                            break;
-                        case 'accent_color':
-                            primaryButton.style.borderColor = input.value;
-                            break;
+            // Toggle new theme input visibility
+            themeSelector.addEventListener('change', () => {
+                if (themeSelector.value === 'new') {
+                    newThemeInput.classList.remove('hidden');
+                    keyInput.value = '';
+                    primaryColorInput.value = '#3490dc';
+                    secondaryColorInput.value = '#ffed4a';
+                    lightPrimaryInput.value = '#6cb2eb';
+                    lightSecondaryInput.value = '#fff5a1';
+                    accentColorInput.value = '#e3342f';
+                    textLightInput.value = '#ffffff';
+                    textDarkInput.value = '#1a202c';
+                    darkBackgroundInput.value = '#2d3748';
+                    updatePreview();
+                } else {
+                    newThemeInput.classList.add('hidden');
+                    if (themeSelector.value) {
+                        fetchTheme(themeSelector.value);
                     }
-                });
+                }
             });
+
+            // Fetch theme data
+            function fetchTheme(themeId) {
+                fetch('{{ route('theme-customizer.get-theme') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({ theme_id: themeId }),
+                })
+                    .then(response => response.json())
+                    .then(theme => {
+                        keyInput.value = theme.key;
+                        primaryColorInput.value = theme.primary_color;
+                        secondaryColorInput.value = theme.secondary_color;
+                        lightPrimaryInput.value = theme.light_primary;
+                        lightSecondaryInput.value = theme.light_secondary;
+                        accentColorInput.value = theme.accent_color;
+                        textLightInput.value = theme.text_light;
+                        textDarkInput.value = theme.text_dark;
+                        darkBackgroundInput.value = theme.dark_background;
+                        updatePreview();
+                    });
+            }
+
+            // Set active theme
+            setActiveButton.addEventListener('click', () => {
+                const themeId = themeSelector.value;
+                if (themeId && themeId !== 'new') {
+                    fetch('{{ route('theme-customizer.set-active') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({ theme_id: themeId }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message || 'Active theme set successfully!');
+                            window.location.reload();
+                        });
+                }
+            });
+
+            // Real-time preview
+            function updatePreview() {
+                previewSection.style.backgroundColor = document.getElementById('dark_background').value;
+                previewHeading.style.color = document.getElementById('text_light').value;
+                previewText.style.color = document.getElementById('text_light').value;
+                previewCard.style.backgroundColor = document.getElementById('light_primary').value;
+                previewCardHeading.style.color = document.getElementById('text_dark').value;
+                previewCardText.style.color = document.getElementById('text_dark').value;
+                primaryButton.style.backgroundColor = document.getElementById('primary_color').value;
+                primaryButton.style.color = document.getElementById('text_light').value;
+                primaryButton.style.borderColor = document.getElementById('accent_color').value;
+                secondaryButton.style.backgroundColor = document.getElementById('secondary_color').value;
+                secondaryButton.style.color = document.getElementById('text_dark').value;
+            }
+
+            colorInputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            // Initial preview update
+            updatePreview();
         });
     </script>
 </div>
