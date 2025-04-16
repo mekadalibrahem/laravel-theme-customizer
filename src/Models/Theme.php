@@ -9,10 +9,15 @@ class Theme extends Model
     protected $fillable = [
         'user_id',
         'is_global',
+        'key',
         'primary_color',
         'secondary_color',
-        'background_color',
-        'text_color',
+        'light_primary',
+        'light_secondary',
+        'accent_color',
+        'text_light',
+        'text_dark',
+        'dark_background',
     ];
 
     protected $casts = [
