@@ -13,15 +13,12 @@ class ThemeController extends Controller
 
     public function __construct(ThemeRepositoryInterface $themeRepository)
     {
-        $this->middleware('auth');
         $this->themeRepository = $themeRepository;
     }
 
     public function show()
     {
-        if (config('theme-customizer.theme_mode') === 'admin' && !Auth::user()->hasRole(config('theme-customizer.admin_role'))) {
-            abort(403, 'Only admins can customize the theme.');
-        }
+     
 
         $theme = config('theme-customizer.theme_mode') === 'admin'
             ? $this->themeRepository->getGlobalTheme()
@@ -29,14 +26,12 @@ class ThemeController extends Controller
 
         $theme = $theme ?? config('theme-customizer.default_colors');
 
-        return view('theme-customizer::theme.edit', compact('theme'));
+        return view('laravel-theme-customizer::theme.edit', compact('theme'));
     }
 
     public function update(Request $request)
     {
-        if (config('theme-customizer.theme_mode') === 'admin' && !Auth::user()->hasRole(config('theme-customizer.admin_role'))) {
-            abort(403, 'Only admins can customize the theme.');
-        }
+       
 
         $request->validate([
             'primary_color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',

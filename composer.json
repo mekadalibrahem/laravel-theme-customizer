@@ -3,7 +3,7 @@
     "description": "A Laravel package for theme customization with TailwindCSS and Bootstrap support",
     "type": "library",
     "license": "MIT",
-    "version": "0.0.0.10",
+    "version": "0.0.0.38",
     "autoload": {
         "psr-4": {
             "Mekad\\LaravelThemeCustomizer\\": "src/"
@@ -17,5 +17,18 @@
     ],
     "require-dev": {
         "orchestra/testbench": "^10.2"
+    },
+    "extra": {
+
+        "laravel": {
+
+            "providers": [
+
+                "Mekad\\LaravelThemeCustomizer\\ThemeCustomizerServiceProvider"
+
+            ]
+           
+        }
+
     }
 }

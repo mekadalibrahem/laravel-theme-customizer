@@ -21,7 +21,7 @@ class ThemeMiddleware
                 ? $this->themeRepository->getGlobalTheme()
                 : $this->themeRepository->getByUserId(Auth::id());
 
-            view()->share('theme', $theme ?? config('theme-customizer.default_colors'));
+            view()->share('theme', $theme );
         } else {
             view()->share('theme', config('theme-customizer.default_colors'));
         }
