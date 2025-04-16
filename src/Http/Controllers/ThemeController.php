@@ -179,4 +179,32 @@ class ThemeController extends Controller
 
         return response()->json($theme);
     }
+
+    /**
+     * Delete a theme.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(Request $request)
+    {
+        if (config('theme-customizer.theme_mode') === 'admin' && !$this->isAdmin()) {
+            return redirect()->back()->with('error', 'You do not have permission to delete themes.');
+        }
+
+        $request->validate([
+            'theme_id' => 'required|exists:themes,id',
+        ]);
+
+        $theme = $this->themeRepository->find($request->theme_id);
+
+        // Prevent deletion of active theme
+        if ($theme->is_active) {
+            return redirect()->back()->with('error', 'Cannot delete the active theme. Please set another theme as active first.');
+        }
+
+        $this->themeRepository->delete($request->theme_id);
+
+        return redirect()->back()->with('success', 'Theme deleted successfully!');
+    }
 }

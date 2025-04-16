@@ -84,4 +84,12 @@ interface ThemeRepositoryInterface
      * @return void
      */
     public function setActiveGlobalTheme($themeId);
+
+    /**
+     * Delete a theme.
+     *
+     * @param int $themeId
+     * @return void
+     */
+    public function delete($themeId);
 }

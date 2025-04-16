@@ -11,20 +11,16 @@ class InstallThemeCustomizer extends Command
 
     public function handle()
     {
-        $this->info('Installing Theme Customizer...');
+        $this->info('Installing Laravel Theme Customizer...');
 
-        $this->call('vendor:publish', [
-            '--provider' => 'Mekad\LaravelThemeCustomizer\ThemeCustomizerServiceProvider',
-            '--tag' => 'config',
-        ]);
-
-        $this->call('vendor:publish', [
-            '--provider' => 'Mekad\LaravelThemeCustomizer\ThemeCustomizerServiceProvider',
-            '--tag' => 'migrations',
-        ]);
-
+        // Run migrations
         $this->call('migrate');
 
-        $this->info('Theme Customizer installed successfully!');
+        // Run seeder
+        $this->call('db:seed', [
+            '--class' => \Mekad\LaravelThemeCustomizer\Database\Seeders\ThemeSeeder::class
+        ]);
+
+        $this->info('Laravel Theme Customizer installed successfully!');
     }
 }

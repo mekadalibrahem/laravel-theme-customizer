@@ -24,6 +24,7 @@
                     <option value="new">Create New Theme</option>
                 </select>
                 <button type="button" id="set-active-theme" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-primary @else bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition @endif">Set as Active</button>
+                <button type="button" id="delete-theme" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-danger @else bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition @endif hidden">Delete Theme</button>
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-primary @else bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800 transition @endif">Save Theme</button>
@@ -113,6 +114,7 @@
             const textDarkInput = document.getElementById('text_dark');
             const darkBackgroundInput = document.getElementById('dark_background');
             const setActiveButton = document.getElementById('set-active-theme');
+            const deleteButton = document.getElementById('delete-theme');
             const form = document.getElementById('theme-form');
             const colorInputs = document.querySelectorAll('input[type="color"]');
             const previewSection = document.querySelector('.preview-section');
@@ -124,10 +126,11 @@
             const primaryButton = previewCard.querySelector('button:nth-child(3)');
             const secondaryButton = previewCard.querySelector('button:nth-child(4)');
 
-            // Toggle new theme input visibility
+            // Toggle new theme input visibility and delete button
             themeSelector.addEventListener('change', () => {
                 if (themeSelector.value === 'new') {
                     newThemeInput.classList.remove('hidden');
+                    deleteButton.classList.add('hidden');
                     keyInput.value = '';
                     primaryColorInput.value = '#3490dc';
                     secondaryColorInput.value = '#ffed4a';
@@ -140,9 +143,41 @@
                     updatePreview();
                 } else {
                     newThemeInput.classList.add('hidden');
+                    deleteButton.classList.toggle('hidden', !themeSelector.value);
                     if (themeSelector.value) {
                         fetchTheme(themeSelector.value);
                     }
+                }
+            });
+
+            // Handle delete button click
+            deleteButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this theme?')) {
+                    const themeId = themeSelector.value;
+                    const deleteForm = document.createElement('form');
+                    deleteForm.method = 'POST';
+                    deleteForm.action = '{{ route(config('theme-customizer.routes.name_prefix') . 'delete') }}';
+                    
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    
+                    const themeIdInput = document.createElement('input');
+                    themeIdInput.type = 'hidden';
+                    themeIdInput.name = 'theme_id';
+                    themeIdInput.value = themeId;
+                    
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+                    
+                    deleteForm.appendChild(csrfToken);
+                    deleteForm.appendChild(themeIdInput);
+                    deleteForm.appendChild(methodInput);
+                    document.body.appendChild(deleteForm);
+                    deleteForm.submit();
                 }
             });
 
@@ -210,8 +245,9 @@
                 input.addEventListener('input', updatePreview);
             });
 
-            // Initial preview update
+            // Initial preview update and delete button state
             updatePreview();
+            deleteButton.classList.toggle('hidden', !themeSelector.value);
         });
     </script>
 </div>

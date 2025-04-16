@@ -52,7 +52,23 @@ class ThemeRepository implements ThemeRepositoryInterface
 
     public function setActiveGlobalTheme($themeId)
     {
+        // Deactivate all global themes
         Theme::where('is_global', true)->update(['is_active' => false]);
-        Theme::where('id', $themeId)->update(['is_active' => true]);
+
+        // Activate the specified theme
+        return Theme::where('id', $themeId)
+            ->where('is_global', true)
+            ->update(['is_active' => true]);
+    }
+
+    /**
+     * Delete a theme.
+     *
+     * @param int $themeId
+     * @return bool
+     */
+    public function delete($themeId)
+    {
+        return Theme::where('id', $themeId)->delete();
     }
 }

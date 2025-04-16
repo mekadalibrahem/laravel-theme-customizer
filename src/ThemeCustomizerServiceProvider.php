@@ -10,7 +10,7 @@ use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
 
 class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    public function boot(Kernel $kernel)
+    public function boot()
     {
         $this->publishConfig();
         $this->publishMigrations();
@@ -20,13 +20,8 @@ class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->loadViews();
         $this->registerCommands();
 
-        // Run migrations and seeders
+        // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->callAfterResolving('migrator', function ($migrator) {
-            $migrator->after(function () {
-                $this->app->make(\Mekad\LaravelThemeCustomizer\Database\Seeders\ThemeSeeder::class)->run();
-            });
-        });
 
         // Register Blade components
         Blade::componentNamespace('Mekad\\LaravelThemeCustomizer\\View\\Components', 'LaravelThemeCustomizer');
@@ -90,6 +85,11 @@ class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laravel-theme-customizer');
+    }
+
+    private function publishSeeder()
+    {
+        $this->publishes([__DIR__ . '/../database/seeders/' => database_path('seeders'), 'seeders']);
     }
 
     private function registerCommands()

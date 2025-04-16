@@ -1,23 +1,15 @@
 # Laravel Theme Customizer
 
-A powerful Laravel package that allows you to customize and manage themes for your application. Supports both global themes (admin-managed) and user-specific themes.
+A Laravel package that allows you to customize your application's theme colors and settings.
 
 ## Features
 
-- 🎨 Easy theme customization with color picker
-- 👥 Support for both global and user-specific themes
-- 🎭 Framework agnostic (works with Tailwind and Bootstrap)
-- 🔄 Real-time theme preview
-- 🔒 Configurable role-based access control
-- ⚙️ Configurable routes and middleware
-- 📱 Responsive design
-
-## Requirements
-
-- PHP >= 8.1
-- Laravel >= 9.0
-- MySQL/PostgreSQL/SQLite
-- (Optional) A role management package like spatie/laravel-permission if using role-based access control
+- Global and user-specific theme customization
+- Color picker for primary, secondary, and accent colors
+- Light and dark mode support
+- Role-based access control for theme management
+- Default themes included
+- Easy installation and setup
 
 ## Installation
 
@@ -33,145 +25,92 @@ composer require mekad/laravel-theme-customizer
 php artisan vendor:publish --provider="Mekad\LaravelThemeCustomizer\ThemeCustomizerServiceProvider"
 ```
 
-3. Run the migrations:
+3. Run the installation command:
 
 ```bash
-php artisan migrate
+php artisan theme-customizer:install
 ```
+
+This will:
+
+- Run the necessary migrations
+- Seed the database with default themes
+- Set up the required configuration
+
+## Default Themes
+
+The package comes with three pre-configured global themes:
+
+1. **Dark Blue & Green** (Active by default)
+   - Primary: #1a3a6c
+   - Secondary: #1e4d45
+   - Accent: #ffc107
+
+2. **Light Blue & Green**
+   - Primary: #3490dc
+   - Secondary: #38a169
+   - Accent: #f6ad55
+
+3. **Purple & Teal**
+   - Primary: #6b46c1
+   - Secondary: #319795
+   - Accent: #f687b3
 
 ## Configuration
 
-After installation, you can configure the package by modifying the `config/theme-customizer.php` file:
+After installation, you can configure the package by editing the `config/theme-customizer.php` file. The main configuration options are:
 
 ```php
 return [
-    'framework' => 'tailwind', // or 'bootstrap'
-    'theme_mode' => 'user', // or 'admin'
+    'theme_mode' => 'admin', // 'admin' or 'user'
     'roles' => [
-        'enabled' => true, // Set to false to disable role checking
-        'admin_role' => 'admin', // Role name for admin users
+        'enabled' => true,
+        'admin_role' => 'admin',
     ],
-    'routes' => [
-        'prefix' => 'theme-customizer',
-        'middleware' => ['web'],
-        'name_prefix' => 'theme-customizer.',
+    'default_colors' => [
+        'primary_color' => '#1a3a6c',
+        'secondary_color' => '#1e4d45',
+        'light_primary' => '#2c5eaa',
+        'light_secondary' => '#2a6b5f',
+        'accent_color' => '#ffc107',
+        'text_light' => '#f8f9fa',
+        'text_dark' => '#343a40',
+        'dark_background' => '#1a1a24',
     ],
-    // ... other configuration options
 ];
 ```
 
 ## Usage
 
-### Basic Usage
+### Blade Components
 
-1. Add the theme editor to your view:
+Use the provided Blade components to apply themes to your views:
 
-```php
-@include('laravel-theme-customizer::components.theme-editor')
+```blade
+<x-laravel-theme-customizer::theme-styles />
 ```
 
-2. Access the theme editor at the configured route (default: `/theme-customizer`)
+### Theme Management
 
-### Theme Modes
+Access the theme management interface at `/theme-customizer` (requires admin role if theme_mode is set to 'admin').
 
-#### Admin Mode
+#### Available Actions
 
-When `theme_mode` is set to 'admin':
+- Create/Update themes
+- Set active theme
+- Delete themes (cannot delete active theme)
+- Preview theme changes
 
-- Only users with the admin role can manage themes (if role checking is enabled)
-- Themes are global and affect all users
-- Changes apply to the entire application
+## Requirements
 
-#### User Mode
-
-When `theme_mode` is set to 'user':
-
-- Each user can manage their own themes
-- Themes are user-specific
-- Users can switch between their themes
-
-### Role-Based Access Control
-
-The package supports configurable role-based access control:
-
-1. Enable/Disable Role Checking:
-
-```php
-'roles' => [
-    'enabled' => true, // Set to false to disable role checking
-    'admin_role' => 'admin',
-],
-```
-
-2. When enabled:
-   - Admin mode requires users to have the specified admin role
-   - Role checking is performed on all theme management actions
-   - Unauthorized access attempts are redirected with error messages
-
-3. When disabled:
-   - All users can access theme management features
-   - No role checking is performed
-   - Works with any authentication system
-
-### Customizing Routes
-
-You can customize the routes in the config file:
-
-```php
-'routes' => [
-    'prefix' => 'admin/themes', // Custom URL prefix
-    'middleware' => ['web', 'auth', 'admin'], // Custom middleware
-    'name_prefix' => 'admin.themes.', // Custom route name prefix
-],
-```
-
-### Theme Data Structure
-
-Themes are stored with the following structure:
-
-```php
-[
-    'key' => 'unique_theme_key',
-    'primary_color' => '#3490dc',
-    'secondary_color' => '#ffed4a',
-    'light_primary' => '#6cb2eb',
-    'light_secondary' => '#fff5a1',
-    'accent_color' => '#e3342f',
-    'text_light' => '#ffffff',
-    'text_dark' => '#1a202c',
-    'dark_background' => '#2d3748',
-]
-```
-
-## API
-
-### ThemeController
-
-The package provides the following endpoints:
-
-- `GET /theme-customizer` - Show theme editor
-- `POST /theme-customizer` - Update/create theme
-- `POST /theme-customizer/set-active` - Set active theme
-- `POST /theme-customizer/get-theme` - Get theme data
-
-### ThemeRepository
-
-Available methods for theme management:
-
-```php
-$themeRepository->getGlobalThemes();
-$themeRepository->getActiveGlobalTheme();
-$themeRepository->getByUserId($userId);
-$themeRepository->getActiveThemeByUserId($userId);
-$themeRepository->updateOrCreate($userId, $data, $isGlobal);
-$themeRepository->setActiveTheme($userId, $themeId);
-$themeRepository->setActiveGlobalTheme($themeId);
-```
-
-## Contributing
-
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+- PHP >= 8.1
+- Laravel >= 9.0
+- Composer
 
 ## License
 
-This package is open-sourced software licensed under the [MIT license](LICENSE.md).
+This package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Support
+
+If you find a bug or have a feature request, please open an issue on the [GitHub repository](https://github.com/yourusername/laravel-theme-customizer).

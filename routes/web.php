@@ -15,6 +15,7 @@ Route::prefix($prefix)
         Route::post('/', [ThemeController::class, 'update'])->name('update');
         Route::post('/set-active', [ThemeController::class, 'setActive'])->name('set-active');
         Route::post('/get-theme', [ThemeController::class, 'getTheme'])->name('get-theme');
+        Route::delete('/delete', [ThemeController::class, 'delete'])->name('delete');
     });
 
 Route::get('/theme-test', function () {
