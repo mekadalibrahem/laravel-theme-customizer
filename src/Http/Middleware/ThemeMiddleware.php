@@ -16,15 +16,19 @@ class ThemeMiddleware
 
     public function handle($request, Closure $next)
     {
-        if (Auth::check()) {
+       
+
             $theme = config('theme-customizer.theme_mode') === 'admin'
                 ? $this->themeRepository->getGlobalTheme()
                 : $this->themeRepository->getByUserId(Auth::id());
+           
+        
+        
 
-            view()->share('theme', $theme );
-        } else {
-            view()->share('theme', config('theme-customizer.default_colors'));
-        }
+            view()->share('theme', $theme->attributesToArray() ?? config('theme-customizer.default_colors') );
+       
+      
+       
 
         return $next($request);
     }
