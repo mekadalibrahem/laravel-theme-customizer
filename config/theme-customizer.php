@@ -10,4 +10,5 @@ return [
         'background_color' => '#ffffff',
         'text_color' => '#1a202c',
     ],
+    'cache' => false ,
 ];
