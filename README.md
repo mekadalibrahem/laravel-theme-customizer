@@ -8,7 +8,7 @@ A powerful Laravel package that allows you to customize and manage themes for yo
 - 👥 Support for both global and user-specific themes
 - 🎭 Framework agnostic (works with Tailwind and Bootstrap)
 - 🔄 Real-time theme preview
-- 🔒 Role-based access control
+- 🔒 Configurable role-based access control
 - ⚙️ Configurable routes and middleware
 - 📱 Responsive design
 
@@ -17,6 +17,7 @@ A powerful Laravel package that allows you to customize and manage themes for yo
 - PHP >= 8.1
 - Laravel >= 9.0
 - MySQL/PostgreSQL/SQLite
+- (Optional) A role management package like spatie/laravel-permission if using role-based access control
 
 ## Installation
 
@@ -46,7 +47,10 @@ After installation, you can configure the package by modifying the `config/theme
 return [
     'framework' => 'tailwind', // or 'bootstrap'
     'theme_mode' => 'user', // or 'admin'
-    'admin_role' => 'admin',
+    'roles' => [
+        'enabled' => true, // Set to false to disable role checking
+        'admin_role' => 'admin', // Role name for admin users
+    ],
     'routes' => [
         'prefix' => 'theme-customizer',
         'middleware' => ['web'],
@@ -74,7 +78,7 @@ return [
 
 When `theme_mode` is set to 'admin':
 
-- Only users with the admin role can manage themes
+- Only users with the admin role can manage themes (if role checking is enabled)
 - Themes are global and affect all users
 - Changes apply to the entire application
 
@@ -85,6 +89,29 @@ When `theme_mode` is set to 'user':
 - Each user can manage their own themes
 - Themes are user-specific
 - Users can switch between their themes
+
+### Role-Based Access Control
+
+The package supports configurable role-based access control:
+
+1. Enable/Disable Role Checking:
+
+```php
+'roles' => [
+    'enabled' => true, // Set to false to disable role checking
+    'admin_role' => 'admin',
+],
+```
+
+2. When enabled:
+   - Admin mode requires users to have the specified admin role
+   - Role checking is performed on all theme management actions
+   - Unauthorized access attempts are redirected with error messages
+
+3. When disabled:
+   - All users can access theme management features
+   - No role checking is performed
+   - Works with any authentication system
 
 ### Customizing Routes
 

@@ -27,14 +27,35 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Admin Role
+    | Role Configuration
     |--------------------------------------------------------------------------
     |
-    | The role name that identifies admin users who can manage global themes.
-    | This is used when theme_mode is set to 'admin'.
+    | Configuration for role-based access control.
     |
     */
-    'admin_role' => 'admin',
+    'roles' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Enable Role Check
+        |--------------------------------------------------------------------------
+        |
+        | Whether to enable role-based access control.
+        | Set to false to disable role checking completely.
+        |
+        */
+        'enabled' => true,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Role
+        |--------------------------------------------------------------------------
+        |
+        | The role name that identifies admin users who can manage global themes.
+        | This is used when theme_mode is set to 'admin' and roles.enabled is true.
+        |
+        */
+        'admin_role' => 'admin',
+    ],
 
     /*
     |--------------------------------------------------------------------------

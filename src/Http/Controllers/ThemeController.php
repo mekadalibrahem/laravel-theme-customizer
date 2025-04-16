@@ -37,16 +37,34 @@ class ThemeController extends Controller
     }
 
     /**
+     * Check if the current user has admin role.
+     *
+     * @return bool
+     */
+    protected function isAdmin()
+    {
+        if (!config('theme-customizer.roles.enabled')) {
+            return true;
+        }
+
+        return Auth::check() && Auth::user()->hasRole(config('theme-customizer.roles.admin_role'));
+    }
+
+    /**
      * Display the theme editor interface.
      *
      * Retrieves themes based on the current theme mode:
      * - Admin mode: Shows global themes
      * - User mode: Shows user-specific themes
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function show()
     {
+        if (config('theme-customizer.theme_mode') === 'admin' && !$this->isAdmin()) {
+            return redirect()->back()->with('error', 'You do not have permission to access this page.');
+        }
+
         $themes = config('theme-customizer.theme_mode') === 'admin'
             ? $this->themeRepository->getGlobalThemes()
             : $this->themeRepository->getByUserId(Auth::id());
@@ -73,6 +91,10 @@ class ThemeController extends Controller
      */
     public function update(Request $request)
     {
+        if (config('theme-customizer.theme_mode') === 'admin' && !$this->isAdmin()) {
+            return redirect()->back()->with('error', 'You do not have permission to update themes.');
+        }
+
         $request->validate([
             'key' => 'required|string|max:255|regex:/^[a-zA-Z0-9_-]+$/',
             'primary_color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
@@ -118,6 +140,10 @@ class ThemeController extends Controller
      */
     public function setActive(Request $request)
     {
+        if (config('theme-customizer.theme_mode') === 'admin' && !$this->isAdmin()) {
+            return redirect()->back()->with('error', 'You do not have permission to set active themes.');
+        }
+
         $request->validate([
             'theme_id' => 'required|exists:themes,id',
         ]);
@@ -141,6 +167,10 @@ class ThemeController extends Controller
      */
     public function getTheme(Request $request)
     {
+        if (config('theme-customizer.theme_mode') === 'admin' && !$this->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $request->validate([
             'theme_id' => 'required|exists:themes,id',
         ]);

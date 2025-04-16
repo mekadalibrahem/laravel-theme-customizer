@@ -11,6 +11,8 @@ All notable changes to `laravel-theme-customizer` will be documented in this fil
 - Support for both global and user-specific themes
 - Theme preview functionality
 - Color validation for theme updates
+- Configurable role-based access control
+- Option to disable role checking
 
 ### Changed
 
@@ -18,12 +20,15 @@ All notable changes to `laravel-theme-customizer` will be documented in this fil
 - Improved theme editor interface
 - Enhanced theme selector to use theme key instead of name
 - Updated configuration structure for better customization
+- Improved role checking implementation
+- Enhanced error handling for unauthorized access
 
 ### Fixed
 
 - Fixed User model namespace in Theme model
 - Improved theme activation handling
 - Enhanced error handling for theme operations
+- Fixed role checking in admin mode
 
 ## [1.0.0] - 2024-04-16
 
