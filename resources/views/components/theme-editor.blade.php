@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Customize Theme</title>
-    @if (config('theme-customizer.framework') === 'bootstrap')
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @elseif (config('theme-customizer.framework') === 'tailwind')
-        <script src="https://cdn.tailwindcss.com"></script>
-    @endif
-</head>
-<body class="bg-background text-color">
+
     <div class="@if(config('theme-customizer.framework') === 'bootstrap') container @else max-w-7xl mx-auto px-4 @endif">
         <h1 class="@if(config('theme-customizer.framework') === 'bootstrap') mt-5 @else text-3xl font-bold mt-8 @endif">Customize Theme</h1>
 
@@ -61,5 +51,3 @@
             <button type="submit" class="@if(config('theme-customizer.framework') === 'bootstrap') btn btn-primary @else bg-green-700 text-white px-4 py-2 rounded hover:bg-opacity-90 @endif">Save Theme</button>
         </form>
     </div>
-</body>
-</html>
