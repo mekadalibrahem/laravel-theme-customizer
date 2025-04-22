@@ -4,6 +4,7 @@ namespace Mekad\LaravelThemeCustomizer\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Theme Model
@@ -28,14 +29,6 @@ class Theme extends Model
         'is_global',
         'key',
         'is_active',
-        'primary_color',
-        'secondary_color',
-        'light_primary',
-        'light_secondary',
-        'accent_color',
-        'text_light',
-        'text_dark',
-        'dark_background',
     ];
 
     /**
@@ -56,5 +49,10 @@ class Theme extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function colors(): HasOne
+    {
+        return $this->hasOne(ThemeColor::class);
     }
 }

@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Blade;
 use Mekad\LaravelThemeCustomizer\Console\InstallThemeCustomizer;
 use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepository;
 use Mekad\LaravelThemeCustomizer\Repositories\ThemeRepositoryInterface;
+use Mekad\LaravelThemeCustomizer\Colors\ColorManager;
+use Mekad\LaravelThemeCustomizer\Repositories\ThemeColorRepository;
+use Mekad\LaravelThemeCustomizer\Services\ThemeCustomizerService;
 
 class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -43,6 +46,17 @@ class ThemeCustomizerServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Bind repository interface to implementation
         $this->app->bind(ThemeRepositoryInterface::class, ThemeRepository::class);
+
+        $this->app->singleton(ColorManager::class, function ($app) {
+            return new ColorManager();
+        });
+    $this->app->singleton(ThemeCustomizerService::class, function ($app) {
+        return new ThemeCustomizerService(
+            $app->make(ThemeRepository::class),
+            $app->make(ThemeColorRepository::class),
+            $app->make(ColorManager::class)
+        );
+    });
     }
 
     private function publishConfig()

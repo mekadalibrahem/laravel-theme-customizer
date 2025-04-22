@@ -1,3 +1,4 @@
 <style>
-    {{ $framework->getStyles($theme) }}
+   
+    {{ $framework->getStyles($colors) }}
 </style>

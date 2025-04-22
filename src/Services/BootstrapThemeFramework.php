@@ -4,67 +4,63 @@ namespace Mekad\LaravelThemeCustomizer\Services;
 
 use Mekad\LaravelThemeCustomizer\Contracts\ThemeFramework;
 
+
 class BootstrapThemeFramework implements ThemeFramework
 {
+    public function __construct(
+      
+    ) {}
+
     public function getStyles(array $colors): string
     {
-        return <<<CSS
-:root {
-    --bs-primary: {$colors['primary_color']};
-    --bs-secondary: {$colors['secondary_color']};
-    --bs-light-primary: {$colors['light_primary']};
-    --bs-light-secondary: {$colors['light_secondary']};
-    --bs-accent: {$colors['accent_color']};
-    --bs-text-light: {$colors['text_light']};
-    --bs-text-dark: {$colors['text_dark']};
-    --bs-dark-background: {$colors['dark_background']};
-}
+        $css = ":root {\n";
 
-.btn-primary {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-    color: var(--bs-text-light);
-}
+        // Base colors
+        foreach ($colors as $name => $value) {
+            if (!str_contains($name, '-')) { // Only base colors
+                $css .= "    --bs-{$name}: {$value};\n";
+            }
+        }
 
-.btn-primary:hover {
-    background-color: darken(var(--bs-primary), 10%);
-    border-color: darken(var(--bs-primary), 10%);
-}
+        $css .= "}\n\n";
 
-.btn-secondary {
-    background-color: var(--bs-secondary);
-    border-color: var(--bs-secondary);
-    color: var(--bs-text-dark);
-}
+        // Generate utility classes for base colors
+        foreach ($colors as $name => $value) {
+            if (!str_contains($name, '-')) { // Only base colors
+                $css .= ".btn-{$name} {\n";
+                $css .= "    background-color: var(--bs-{$name});\n";
+                $css .= "    border-color: var(--bs-{$name});\n";
+                $css .= "    color: var(--bs-text-light);\n";
+                $css .= "}\n\n";
 
-.btn-secondary:hover {
-    background-color: darken(var(--bs-secondary), 10%);
-    border-color: darken(var(--bs-secondary), 10%);
-}
+                $css .= ".btn-{$name}:hover {\n";
+                $css .= "    background-color: var(--bs-{$name}-dark);\n";
+                $css .= "    border-color: var(--bs-{$name}-dark);\n";
+                $css .= "}\n\n";
 
-.bg-light-primary {
-    background-color: var(--bs-light-primary);
-}
+                $css .= ".bg-{$name} { background-color: var(--bs-{$name}); }\n";
+                $css .= ".text-{$name} { color: var(--bs-{$name}); }\n";
+                $css .= ".border-{$name} { border-color: var(--bs-{$name}); }\n\n";
+            }
+        }
 
-.bg-light-secondary {
-    background-color: var(--bs-light-secondary);
-}
+        // Generate utility classes for shadow variations
+        foreach ($colors as $name => $value) {
+            if (str_contains($name, '-')) { // Only shadow variations
+                $baseName = explode('-', $name)[0];
+                $variant = explode('-', $name)[1];
 
-.bg-accent {
-    background-color: var(--bs-accent);
-}
+                $css .= ".btn-{$baseName}-{$variant} {\n";
+                $css .= "    background-color: var(--bs-{$name});\n";
+                $css .= "    border-color: var(--bs-{$name});\n";
+                $css .= "}\n\n";
 
-.bg-dark-background {
-    background-color: var(--bs-dark-background);
-}
+                $css .= ".bg-{$name} { background-color: var(--bs-{$name}); }\n";
+                $css .= ".text-{$name} { color: var(--bs-{$name}); }\n";
+                $css .= ".border-{$name} { border-color: var(--bs-{$name}); }\n\n";
+            }
+        }
 
-.text-light {
-    color: var(--bs-text-light);
-}
-
-.text-dark {
-    color: var(--bs-text-dark);
-}
-CSS;
+        return $css;
     }
 }

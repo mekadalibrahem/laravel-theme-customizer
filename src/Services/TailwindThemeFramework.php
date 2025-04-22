@@ -4,65 +4,45 @@ namespace Mekad\LaravelThemeCustomizer\Services;
 
 use Mekad\LaravelThemeCustomizer\Contracts\ThemeFramework;
 
+
 class TailwindThemeFramework implements ThemeFramework
 {
+    public function __construct(
+       
+    ) {}
+
     public function getStyles(array $colors): string
     {
-        return <<<CSS
-:root {
-    --primary-color: {$colors['primary_color']};
-    --secondary-color: {$colors['secondary_color']};
-    --light-primary: {$colors['light_primary']};
-    --light-secondary: {$colors['light_secondary']};
-    --accent-color: {$colors['accent_color']};
-    --text-light: {$colors['text_light']};
-    --text-dark: {$colors['text_dark']};
-    --dark-background: {$colors['dark_background']};
-}
+        // dd($colors);
+        $css = ":root {\n";
 
-.bg-primary {
-    background-color: var(--primary-color);
-}
+        // Base colors
+        foreach ($colors as $name => $value) {
+          
+                $css .= "    --{$name}: {$value};\n";
+           
+        }
 
-.text-primary {
-    color: var(--primary-color);
-}
+        $css .= "}\n\n";
 
-.bg-secondary {
-    background-color: var(--secondary-color);
-}
+        // Generate utility classes for base colors
+        foreach ($colors as $name => $value) {
+            if (!str_contains($name, '-')) { // Only base colors
+                $css .= ".bg-{$name} { background-color: var(--{$name}); }\n";
+                $css .= ".text-{$name} { color: var(--{$name}); }\n";
+                $css .= ".border-{$name} { border-color: var(--{$name}); }\n\n";
+            }
+        }
 
-.text-secondary {
-    color: var(--secondary-color);
-}
+        // Generate utility classes for shadow variations
+        foreach ($colors as $name => $value) {
+            if (str_contains($name, '-')) { // Only shadow variations
+                $css .= ".bg-{$name} { background-color: var(--{$name}); }\n";
+                $css .= ".text-{$name} { color: var(--{$name}); }\n";
+                $css .= ".border-{$name} { border-color: var(--{$name}); }\n\n";
+            }
+        }
 
-.bg-light-primary {
-    background-color: var(--light-primary);
-}
-
-.bg-light-secondary {
-    background-color: var(--light-secondary);
-}
-
-.bg-accent {
-    background-color: var(--accent-color);
-}
-
-.text-accent {
-    color: var(--accent-color);
-}
-
-.bg-dark-background {
-    background-color: var(--dark-background);
-}
-
-.text-light {
-    color: var(--text-light);
-}
-
-.text-dark {
-    color: var(--text-dark);
-}
-CSS;
+        return $css;
     }
 }
